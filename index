@@ -1,0 +1,412 @@
+import React, { useState } from 'react';
+import { Plus, Trash2, Play, RotateCcw, ChevronDown, ChevronUp, Swords } from 'lucide-react';
+
+// Sample video data - REPLACE WITH YOUR WIX VIDEO URLS
+const VIDEO_LIBRARY = [
+  {
+    id: 1,
+    title: "Solo Baston - 12 Angles of Attack",
+    category: "Solo Baston",
+    level: "Fundamental",
+    duration: "8:30",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=12+Angles",
+    wixVideoId: ""
+  },
+  {
+    id: 2,
+    title: "Heaven Six - Sinawali Flow",
+    category: "Doble Baston",
+    level: "Intermediate",
+    duration: "6:45",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Heaven+Six",
+    wixVideoId: ""
+  },
+  {
+    id: 3,
+    title: "Redonda - Continuous Strike Pattern",
+    category: "Solo Baston",
+    level: "Fundamental",
+    duration: "5:20",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Redonda",
+    wixVideoId: ""
+  },
+  {
+    id: 4,
+    title: "Espada y Daga - Basic Coordination",
+    category: "Espada y Daga",
+    level: "Intermediate",
+    duration: "10:15",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Espada+y+Daga",
+    wixVideoId: ""
+  },
+  {
+    id: 5,
+    title: "Gunting - Destructive Techniques",
+    category: "Empty Hand",
+    level: "Advanced",
+    duration: "12:00",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Gunting",
+    wixVideoId: ""
+  },
+  {
+    id: 6,
+    title: "Triangle Footwork Fundamentals",
+    category: "Footwork",
+    level: "Fundamental",
+    duration: "7:30",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Triangle+Steps",
+    wixVideoId: ""
+  },
+  {
+    id: 7,
+    title: "Hubud Lubud - Partner Drill",
+    category: "Flow Drills",
+    level: "Fundamental",
+    duration: "9:00",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Hubud",
+    wixVideoId: ""
+  },
+  {
+    id: 8,
+    title: "Sumbrada - Advanced Flow Pattern",
+    category: "Flow Drills",
+    level: "Advanced",
+    duration: "11:20",
+    thumbnail: "https://via.placeholder.com/320x180/1a1a1a/d4af37?text=Sumbrada",
+    wixVideoId: ""
+  }
+];
+
+const CATEGORIES = [...new Set(VIDEO_LIBRARY.map(v => v.category))];
+
+export default function PTKRegimentBuilder() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [regiment, setRegiment] = useState([]);
+  const [playMode, setPlayMode] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [expandedLibrary, setExpandedLibrary] = useState(true);
+
+  const filteredVideos = selectedCategory === 'All' 
+    ? VIDEO_LIBRARY 
+    : VIDEO_LIBRARY.filter(v => v.category === selectedCategory);
+
+  const addToRegiment = (video) => {
+    setRegiment([...regiment, {
+      ...video,
+      regimentId: Date.now(),
+      repetitions: 3,
+      duration: 5
+    }]);
+  };
+
+  const removeFromRegiment = (regimentId) => {
+    setRegiment(regiment.filter(item => item.regimentId !== regimentId));
+  };
+
+  const updateRepetitions = (regimentId, value) => {
+    setRegiment(regiment.map(item => 
+      item.regimentId === regimentId 
+        ? { ...item, repetitions: Math.max(1, parseInt(value) || 1) }
+        : item
+    ));
+  };
+
+  const updateDuration = (regimentId, value) => {
+    setRegiment(regiment.map(item => 
+      item.regimentId === regimentId 
+        ? { ...item, duration: Math.max(1, parseInt(value) || 1) }
+        : item
+    ));
+  };
+
+  const moveItem = (index, direction) => {
+    const newRegiment = [...regiment];
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex >= 0 && newIndex < newRegiment.length) {
+      [newRegiment[index], newRegiment[newIndex]] = [newRegiment[newIndex], newRegiment[index]];
+      setRegiment(newRegiment);
+    }
+  };
+
+  const startTraining = () => {
+    if (regiment.length > 0) {
+      setPlayMode(true);
+      setCurrentVideoIndex(0);
+    }
+  };
+
+  const nextVideo = () => {
+    if (currentVideoIndex < regiment.length - 1) {
+      setCurrentVideoIndex(currentVideoIndex + 1);
+    } else {
+      setPlayMode(false);
+      setCurrentVideoIndex(0);
+    }
+  };
+
+  const previousVideo = () => {
+    if (currentVideoIndex > 0) {
+      setCurrentVideoIndex(currentVideoIndex - 1);
+    }
+  };
+
+  const resetRegiment = () => {
+    setRegiment([]);
+    setPlayMode(false);
+    setCurrentVideoIndex(0);
+  };
+
+  const totalTrainingTime = regiment.reduce((total, item) => {
+    return total + (item.duration * item.repetitions);
+  }, 0);
+
+  if (playMode) {
+    const currentItem = regiment[currentVideoIndex];
+    return (
+      <div className="min-h-screen bg-black text-white p-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-neutral-900 border border-yellow-700/40 rounded shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-neutral-900 via-yellow-900/30 to-neutral-900 border-b border-yellow-700/40 p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <Swords className="w-8 h-8 text-yellow-600" />
+                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-300">TRAINING MODE</h2>
+              </div>
+              <p className="text-yellow-200/70 text-sm uppercase tracking-wider">Exercise {currentVideoIndex + 1} of {regiment.length} | Nunquam Non Paratus</p>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-neutral-950 border border-yellow-700/30 rounded aspect-video flex items-center justify-center mb-6">
+                <div className="text-center">
+                  <Play className="w-20 h-20 mx-auto mb-4 text-yellow-600" />
+                  <p className="text-xl text-yellow-200/60">Video Player Area</p>
+                  <p className="text-sm text-neutral-500 mt-2">Wix Video Embed</p>
+                </div>
+              </div>
+
+              <div className="bg-neutral-900/50 border border-yellow-700/30 rounded p-6 mb-6">
+                <h3 className="text-2xl font-bold text-yellow-100 mb-3">{currentItem.title}</h3>
+                <div className="flex flex-wrap gap-3 text-sm mb-4">
+                  <span className="border-2 border-yellow-600 bg-yellow-600/10 px-4 py-1.5 rounded text-yellow-100 uppercase tracking-wide font-semibold">{currentItem.category}</span>
+                  <span className="bg-red-900/30 border border-red-800/40 px-4 py-1.5 rounded text-red-200 uppercase tracking-wide font-semibold">{currentItem.level}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border border-yellow-700/30 rounded p-4 bg-neutral-950/50">
+                    <p className="text-neutral-400 text-sm uppercase tracking-wider mb-2">Repetitions</p>
+                    <p className="font-bold text-4xl text-yellow-500">{currentItem.repetitions}×</p>
+                  </div>
+                  <div className="border border-yellow-700/30 rounded p-4 bg-neutral-950/50">
+                    <p className="text-neutral-400 text-sm uppercase tracking-wider mb-2">Duration</p>
+                    <p className="font-bold text-4xl text-yellow-500">{currentItem.duration} min</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 mb-4">
+                <button
+                  onClick={previousVideo}
+                  disabled={currentVideoIndex === 0}
+                  className="flex-1 bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-900 disabled:text-neutral-600 border border-yellow-700/30 text-white py-3 px-6 rounded font-semibold uppercase tracking-wider transition"
+                >
+                  ← Previous
+                </button>
+                <button
+                  onClick={nextVideo}
+                  className="flex-1 bg-gradient-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500 border border-yellow-500 text-black py-3 px-6 rounded font-bold uppercase tracking-wider transition shadow-lg"
+                >
+                  {currentVideoIndex === regiment.length - 1 ? 'Complete ✓' : 'Next →'}
+                </button>
+              </div>
+
+              <button
+                onClick={() => setPlayMode(false)}
+                className="w-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 py-2 px-4 rounded transition uppercase tracking-wider text-sm"
+              >
+                Exit Training Mode
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-8 text-center">
+          <h1 className="text-5xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-300 to-yellow-500">
+            TRAINING REGIMENT BUILDER
+          </h1>
+          <p className="text-neutral-400 uppercase tracking-wider">Pekiti Tirsia Kali • Personalized Training Protocol</p>
+          <div className="mt-2 text-sm text-neutral-500 italic">"Nunquam Non Paratus" - Never Unprepared</div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <div className="bg-neutral-900 border border-yellow-700/40 rounded shadow-xl overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-neutral-900 via-yellow-900/30 to-neutral-900 border-b border-yellow-700/40 p-4 cursor-pointer flex justify-between items-center"
+                onClick={() => setExpandedLibrary(!expandedLibrary)}
+              >
+                <div className="flex items-center gap-3">
+                  <Swords className="w-6 h-6 text-yellow-600" />
+                  <h2 className="text-2xl font-bold text-yellow-100">TECHNIQUE LIBRARY</h2>
+                </div>
+                {expandedLibrary ? <ChevronUp className="text-yellow-600" /> : <ChevronDown className="text-yellow-600" />}
+              </div>
+              
+              {expandedLibrary && (
+                <div className="p-4">
+                  <div className="flex gap-2 mb-4 flex-wrap">
+                    <button
+                      onClick={() => setSelectedCategory('All')}
+                      className={`px-4 py-2 rounded transition uppercase tracking-wider text-sm font-semibold ${
+                        selectedCategory === 'All' 
+                          ? 'bg-gradient-to-r from-yellow-700 to-yellow-600 text-black border border-yellow-500' 
+                          : 'bg-neutral-800 border border-neutral-700 text-neutral-300 hover:bg-neutral-700'
+                      }`}
+                    >
+                      All
+                    </button>
+                    {CATEGORIES.map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-4 py-2 rounded transition uppercase tracking-wider text-sm font-semibold ${
+                          selectedCategory === cat 
+                            ? 'bg-gradient-to-r from-yellow-700 to-yellow-600 text-black border border-yellow-500' 
+                            : 'bg-neutral-800 border border-neutral-700 text-neutral-300 hover:bg-neutral-700'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+                    {filteredVideos.map(video => (
+                      <div key={video.id} className="bg-neutral-950 border border-yellow-700/30 rounded overflow-hidden hover:border-yellow-600/60 transition transform hover:-translate-y-1">
+                        <img src={video.thumbnail} alt={video.title} className="w-full h-32 object-cover border-b border-yellow-700/30" />
+                        <div className="p-3">
+                          <h3 className="font-semibold mb-2 text-sm text-yellow-100">{video.title}</h3>
+                          <div className="flex justify-between items-center text-xs text-neutral-400 mb-3">
+                            <span className="uppercase tracking-wider">{video.level}</span>
+                            <span className="text-yellow-500">{video.duration}</span>
+                          </div>
+                          <button
+                            onClick={() => addToRegiment(video)}
+                            className="w-full bg-gradient-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500 text-black py-2 px-3 rounded flex items-center justify-center gap-2 transition text-sm font-bold uppercase tracking-wider"
+                          >
+                            <Plus className="w-4 h-4" /> Add to Regiment
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:col-span-1">
+            <div className="bg-neutral-900 border border-yellow-700/40 rounded shadow-xl overflow-hidden sticky top-6">
+              <div className="bg-gradient-to-r from-neutral-900 via-red-900/30 to-neutral-900 border-b border-yellow-700/40 p-4">
+                <h2 className="text-2xl font-bold text-yellow-100">MY REGIMENT</h2>
+                <p className="text-yellow-200/60 text-sm uppercase tracking-wider mt-1">Total Duration: {totalTrainingTime} min</p>
+              </div>
+
+              <div className="p-4">
+                {regiment.length === 0 ? (
+                  <div className="text-center py-8 border border-dashed border-neutral-700 rounded">
+                    <p className="text-neutral-500 text-sm">No techniques selected</p>
+                    <p className="text-xs text-neutral-600 mt-2">Build your training protocol</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-2 mb-4 max-h-96 overflow-y-auto">
+                      {regiment.map((item, index) => (
+                        <div key={item.regimentId} className="bg-neutral-950 border border-yellow-700/30 rounded p-3">
+                          <div className="flex items-start gap-2">
+                            <div className="flex flex-col gap-1 mt-1">
+                              <button
+                                onClick={() => moveItem(index, 'up')}
+                                disabled={index === 0}
+                                className="text-yellow-600 hover:text-yellow-400 disabled:text-neutral-700"
+                              >
+                                <ChevronUp className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => moveItem(index, 'down')}
+                                disabled={index === regiment.length - 1}
+                                className="text-yellow-600 hover:text-yellow-400 disabled:text-neutral-700"
+                              >
+                                <ChevronDown className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-sm mb-1 text-yellow-100">{item.title}</h4>
+                              <div className="flex gap-2 text-xs mb-2">
+                                <span className="bg-neutral-900 border border-neutral-700 px-2 py-0.5 rounded text-neutral-400 uppercase tracking-wide">{item.category}</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <label className="text-xs text-neutral-500 block mb-1 uppercase">Reps</label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={item.repetitions}
+                                    onChange={(e) => updateRepetitions(item.regimentId, e.target.value)}
+                                    className="w-full bg-neutral-900 border border-neutral-700 text-yellow-100 px-2 py-1 rounded text-sm focus:border-yellow-600 focus:outline-none"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-xs text-neutral-500 block mb-1 uppercase">Min</label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={item.duration}
+                                    onChange={(e) => updateDuration(item.regimentId, e.target.value)}
+                                    className="w-full bg-neutral-900 border border-neutral-700 text-yellow-100 px-2 py-1 rounded text-sm focus:border-yellow-600 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => removeFromRegiment(item.regimentId)}
+                              className="text-red-500 hover:text-red-400 mt-1"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      <button
+                        onClick={startTraining}
+                        className="w-full bg-gradient-to-r from-green-800 to-green-700 hover:from-green-700 hover:to-green-600 border border-green-600 text-white py-3 px-4 rounded font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg"
+                      >
+                        <Play className="w-5 h-5" /> Begin Training
+                      </button>
+                      <button
+                        onClick={resetRegiment}
+                        className="w-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-400 py-2 px-4 rounded flex items-center justify-center gap-2 transition uppercase tracking-wider text-sm"
+                      >
+                        <RotateCcw className="w-4 h-4" /> Reset
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer className="mt-8 text-center text-xs text-neutral-600 border-t border-neutral-800 pt-4">
+          <p>© 2025 Pekiti Tirsia Kali - Kaluyugan de Palares | Veteran-Owned Business</p>
+        </footer>
+      </div>
+    </div>
+  );
+}
