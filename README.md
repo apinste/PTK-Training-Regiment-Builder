@@ -31,7 +31,7 @@ The **PTK Training Regiment Builder** is an interactive web application designed
 
 Visit the live application: [PTK Regiment Builder](https://yourusername.github.io/ptk-regiment-builder/ptk-regiment-builder.html)
 
-*(Replace with your actual GitHub Pages URL)*
+*(Pending actual GitHub Page URL)*
 
 ---
 
