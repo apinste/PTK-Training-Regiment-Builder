@@ -237,32 +237,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ Distribution allowed
 - ✅ Private use allowed
 - ⚠️ Must include license and copyright notice
-
----
-
-## 📞 Contact
-
-**Pekiti Tirsia Kali - Kaluyugan de Palares**
-
-- 🌐 Website: [trainpekiti.com](https://trainpekiti.com)
-- 📧 Email: contact@trainpekiti.com *(replace with actual email)*
-- 💬 GitHub Issues: [Submit an issue](https://github.com/yourusername/ptk-regiment-builder/issues)
-
-### Social Media
-
-- Facebook: [Your Facebook Page]
-- Instagram: [@yourinstagram]
-- YouTube: [Your YouTube Channel]
-
----
-
-## 🙏 Acknowledgments
-
-- **Grandtuhon Leopoldo T. Gaje, Jr.** - Keeper of the Pekiti-Tirsia Kali System
-- **Tuhon Arlene Pinpin Stevens** - First woman Tuhon in PTK
-- **Tuhon Malcolm Stevens** - U.S. Marine veteran and FMA instructor
-- **The PTK-KDP Community** - For continuous support and feedback
-
+  
 ---
 
 ## 🗺️ Roadmap
