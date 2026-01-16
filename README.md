@@ -29,7 +29,7 @@ The **PTK Training Regiment Builder** is an interactive web application designed
 
 ## 🚀 Live Demo
 
-Visit the live application: [PTK Regiment Builder](https://yourusername.github.io/ptk-regiment-builder/ptk-regiment-builder.html)
+Visit the live application: [PTK Training Session Builder]((https://apinste.github.io/PTK-Training-Regiment-Builder/))
 
 *(Pending actual GitHub Page URL)*
 
